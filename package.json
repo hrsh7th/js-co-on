@@ -1,0 +1,30 @@
+{
+  "name": "co-on",
+  "version": "0.0.1",
+  "description": "co based event handling.",
+  "main": "index.js",
+  "dependencies": {
+    "co": "^3.0.6"
+  },
+  "devDependencies": {
+    "mocha": "^1.18.2"
+  },
+  "scripts": {
+    "test": "mocha --harmony"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hrsh7th/js-co-on"
+  },
+  "keywords": [
+    "co",
+    "event",
+    "emitter"
+  ],
+  "author": "hrsh7th",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hrsh7th/js-co-on/issues"
+  },
+  "homepage": "https://github.com/hrsh7th/js-co-on"
+}
