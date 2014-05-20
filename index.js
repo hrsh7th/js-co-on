@@ -80,16 +80,6 @@ function on(emitter) {
     },
 
     /**
-     * has saved event.
-     *
-     * @param {String} name
-     * @return {Boolean}
-     */
-    hasEmittedEvents: function(name) {
-      return events[name] && events[name].length;
-    },
-
-    /**
      * yield target event.
      *
      * @param {Arguments.<String>} names

@@ -1,12 +1,10 @@
 {
   "name": "co-on",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "co based event handling.",
   "main": "index.js",
-  "dependencies": {
-    "co": "^3.0.6"
-  },
   "devDependencies": {
+    "co": "^3.0.6",
     "mocha": "^1.18.2"
   },
   "scripts": {

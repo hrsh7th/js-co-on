@@ -8,19 +8,32 @@ usage
 ```js
 var co = require('co');
 var on = require('co-on');
+
+co(function*() {
+  var db = require('db');
+  var e = on(db);
+  db.connect('localhost/example');
+  yield e.on('connect');
+  console.log('connect success.');
+});
+```
+
+```js
+var co = require('co');
+var on = require('co-on');
 var fs = require('fs');
 
 co(function*() {
-  var stream = fs.createReadStream('sample.txt');
+  var stream = fs.createReadStream('sample.txt').resume();
   var e = on(stream)
 
   var data = '';
   while (!e.emitted('end')) {
-    data += yield e.on('data');
+    // waiting 'data' or 'end' envets.
+    data += yield e.on('data', 'end');
   }
   console.log(data);
 });
-
 ```
 
 api
@@ -32,10 +45,12 @@ api
 - return
   - co-on object.
 
-#### ```yield e.on(type)```
+#### ```yield e.on(...type)```
 - args
-  - type
-    - event name.
+  - ...type
+    - event names.
+      - yield when emitted an event.
+        - see usage.
 - return
   - EventEmitter#emit(type, ```...```);
 
@@ -44,13 +59,10 @@ api
   - type
     - event name.
 - return
-  - emitted event value.
+  - whether event was already emitted.
 
-#### ```e.hasEmittedEvent(type)```
-- args
-  - type
-    - event name.
-- return
-  - event was saved  by co-on.
-    - if returned true,  can return event results immediately.
+
+todo
+--------
+- error event handling.
 

@@ -31,8 +31,6 @@ describe('co-on', function() {
       }
       assert.ok(e.emitted('data'));
       assert.ok(e.emitted('end'));
-      assert.ok(!e.hasEmittedEvents('data'));
-      assert.ok(!e.hasEmittedEvents('end'));
       assert.equal(stream.listeners('data').length, 0);
       assert.equal(stream.listeners('end').length, 1);
       assert.equal(data, 'data\n');
