@@ -3,6 +3,14 @@ var EventEmitter = require('events').EventEmitter;
 module.exports = on;
 
 /**
+ * waiting events immediately.
+ */
+on.now = function(emitter) {
+  var e = on(emitter);
+  return e.on.apply(e, Array.prototype.slice.call(arguments, [1]));
+};
+
+/**
  * on.
  *
  * @param {Object} emitter
@@ -26,6 +34,18 @@ function on(emitter) {
   };
 
   /**
+   * once.
+   */
+  function once(res) {
+    var called = false;
+    return function() {
+      if (called) return;
+      called = true;
+      return res.apply(this, arguments);
+    };
+  }
+
+  /**
    * response for co.
    */
   function response(name, callback) {
@@ -34,7 +54,9 @@ function on(emitter) {
 
       var event = (events[name] || []).splice(0, 1)[0];
       setImmediate(function() {
-        callback.apply(null, [null].concat(event));
+        setImmediate(function() {
+          callback.apply(null, [null].concat(event));
+        });
       });
       return true;
     };
@@ -43,23 +65,11 @@ function on(emitter) {
   /**
    * clean.
    */
-  function clean(emitter, names, res) {
-    return function() {
-      names.forEach(function(name) {
-        emitter.removeListener(name, res);
+  function clean(name, names, emitter, res) {
+    return function listener() {
+      names.forEach(function(_) {
+        if (name !== _) emitter.removeListener(_, listener);
       });
-      return res.apply(this, arguments);
-    };
-  }
-
-  /**
-   * once.
-   */
-  function once(res) {
-    var called = false;
-    return function() {
-      if (called) return;
-      called = true;
       return res.apply(this, arguments);
     };
   }
@@ -89,16 +99,13 @@ function on(emitter) {
       var names = Array.prototype.slice.call(arguments);
       return function(callback) {
         callback = once(callback);
-        callback = clean(emitter, names, callback);
         names.forEach(function(name) {
-          callback = response(name, callback);
-
-          if (callback()) return;
-          emitter.once(name, function() {
-            callback();
-          });
+          var res = callback;
+          res = clean(name, names, emitter, res);
+          res = response(name, res);
+          if (res()) return;
+          emitter.once(name, res);
         });
-
       };
     }
   };
