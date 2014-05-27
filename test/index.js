@@ -6,35 +6,56 @@ var on = require('../index');
 
 describe('co-on', function() {
 
-  it('emitter', function(done) {
-    co(function*() {
-      var emitter = new EventEmitter();
-      var e = on(emitter);
+  describe('on', function() {
 
-      setTimeout(function() {
-        emitter.emit('data', 'data');
-      }, 1000);
+    it('emitter', function(done) {
+      co(function*() {
+        var emitter = new EventEmitter();
+        var e = on(emitter);
 
-      var data = yield e.on('data');
-      assert.equal(data, 'data');
-    })(done);
+        setTimeout(function() {
+          emitter.emit('data', 'data');
+        }, 1000);
+
+        var data = yield e.on('data');
+        assert.equal(data, 'data');
+      })(done);
+    });
+
+    it('stream', function(done) {
+      co(function*() {
+        var stream = fs.createReadStream(__dirname + '/fixtures/fixture.txt').resume();
+        var e = on(stream);
+
+        var data = '';
+        while (!e.emitted('end')) {
+          data += yield e.on('data', 'end');
+        }
+        assert.ok(e.emitted('data'));
+        assert.ok(e.emitted('end'));
+        assert.equal(stream.listeners('data').length, 0);
+        assert.equal(stream.listeners('end').length, 1);
+        assert.equal(data, 'data\n');
+      })(done);
+    });
+
   });
 
-  it('stream', function(done) {
-    co(function*() {
-      var stream = fs.createReadStream(__dirname + '/fixtures/fixture.txt').resume();
-      var e = on(stream);
+  describe('on with names', function() {
 
-      var data = '';
-      while (!e.emitted('end')) {
-        data += yield e.on('data', 'end');
-      }
-      assert.ok(e.emitted('data'));
-      assert.ok(e.emitted('end'));
-      assert.equal(stream.listeners('data').length, 0);
-      assert.equal(stream.listeners('end').length, 1);
-      assert.equal(data, 'data\n');
-    })(done);
+    it('emitter', function(done) {
+      co(function*() {
+        var emitter = new EventEmitter();
+
+        setTimeout(function() {
+          emitter.emit('data', 'data');
+        }, 1000);
+
+        var data = yield on(emitter, 'data');
+        assert.equal(data, 'data');
+      })(done);
+    });
+
   });
 
 });

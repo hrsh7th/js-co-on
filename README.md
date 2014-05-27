@@ -11,9 +11,8 @@ var on = require('co-on');
 
 co(function*() {
   var db = require('db');
-  var e = on(db);
   db.connect('localhost/example');
-  yield e.on('connect');
+  yield on(db, 'connect');
   console.log('connect success.');
 });
 ```
@@ -38,6 +37,16 @@ co(function*() {
 
 api
 --------
+#### ```yield on.now(emitter, ...types);```
+- args
+  - emitter
+    - EventEmitter instance.
+  - ...types
+    - event names.
+      - see usage.
+- return
+  - EventEmitter#emit(type, ```...```);
+
 #### ```var e = on(emitter);```
 - args
   - emitter
@@ -45,12 +54,11 @@ api
 - return
   - co-on object.
 
-#### ```yield e.on(...type)```
+#### ```yield e.on(...types)```
 - args
-  - ...type
+  - ...types
     - event names.
-      - yield when emitted an event.
-        - see usage.
+      - see usage.
 - return
   - EventEmitter#emit(type, ```...```);
 
