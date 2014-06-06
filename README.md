@@ -1,6 +1,8 @@
 co-on
 ========
 
+[![Build Status](https://travis-ci.org/hrsh7th/js-co-on.png?branch=master)](https://travis-ci.org/hrsh7th/js-co-on)
+
 co based event handling.
 
 usage
