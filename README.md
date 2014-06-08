@@ -39,22 +39,14 @@ co(function*() {
 
 api
 --------
-#### ```yield on.now(emitter, ...types);```
+#### ```var e = on(emitter, [...types]);```
 - args
   - emitter
     - EventEmitter instance.
   - ...types
     - event names.
-      - see usage.
 - return
-  - EventEmitter#emit(type, ```...```);
-
-#### ```var e = on(emitter);```
-- args
-  - emitter
-    - EventEmitter instance.
-- return
-  - co-on object.
+  - thunk or co-on object.
 
 #### ```yield e.on(...types)```
 - args
