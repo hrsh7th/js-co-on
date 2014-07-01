@@ -28,6 +28,11 @@ function on(emitter) {
 function create(emitter) {
 
   /**
+   * listeners.
+   */
+  var listeners = {};
+
+  /**
    * events was emitted.
    */
   var events = {};
@@ -44,30 +49,28 @@ function create(emitter) {
   };
 
   /**
-   * once.
+   * clean.
    */
-  function once(res) {
-    var called = false;
+  function clean(callback, names) {
     return function() {
-      if (called) return;
-      called = true;
-      return res.apply(this, arguments);
+      names.forEach(function(name) {
+        if (listeners[name]) {
+          emitter.removeListener(name, listeners[name]);
+        }
+      });
+      return callback.apply(this, arguments);
     };
   }
 
   /**
    * response for co.
    */
-  function response(name, callback) {
+  function response(callback, name) {
     return function() {
       if (!(events[name] && events[name].length)) return false;
 
       var event = (events[name] || []).splice(0, 1)[0];
-      setImmediate(function() {
-        setImmediate(function() {
-          callback.apply(null, [null].concat(event));
-        });
-      });
+      callback.apply(null, [null].concat(event));
       return true;
     };
   }
@@ -96,11 +99,16 @@ function create(emitter) {
     on: function() {
       var names = slice.call(arguments);
       return function(callback) {
-        callback = once(callback);
-        names.forEach(function(name) {
-          var res = response(name, callback);
-          if (res()) return;
-          emitter.once(name, res);
+        setImmediate(function() {
+          setImmediate(function() {
+            for (var i = 0; i < names.length; i++) {
+              var name = names[i];
+
+              callback = response(callback, name);
+              if (callback()) break;
+              emitter.on(name, listeners[name] = clean(callback, names));
+            }
+          });
         });
       };
     }

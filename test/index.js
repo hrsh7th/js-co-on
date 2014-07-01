@@ -35,7 +35,7 @@ describe('co-on', function() {
         assert.ok(e.emitted('end'));
         assert.equal(stream.listeners('data').length, 0);
         assert.equal(stream.listeners('end').length, 1);
-        assert.equal(data, 'data\n');
+        assert.equal(data, fs.readFileSync(__dirname + '/fixtures/fixture.txt').toString('utf-8'));
       })(done);
     });
 
