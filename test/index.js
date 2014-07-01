@@ -29,12 +29,15 @@ describe('co-on', function() {
 
         var data = '';
         while (!e.emitted('end')) {
-          data += yield e.on('data', 'end');
+          var chunk = yield e.on('data', 'end');
+          if (chunk) {
+            data += chunk;
+          }
         }
         assert.ok(e.emitted('data'));
         assert.ok(e.emitted('end'));
         assert.equal(stream.listeners('data').length, 0);
-        assert.equal(stream.listeners('end').length, 1);
+        assert.equal(stream.listeners('end').length, 1); // stream spec.
         assert.equal(data, fs.readFileSync(__dirname + '/fixtures/fixture.txt').toString('utf-8'));
       })(done);
     });

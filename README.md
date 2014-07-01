@@ -61,7 +61,7 @@ api
   - type
     - event name.
 - return
-  - whether event was already emitted.
+  - whether event was already emitted (and buffer is empty).
 
 
 todo

@@ -1,6 +1,6 @@
 {
   "name": "co-on",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "co based event handling.",
   "main": "index.js",
   "devDependencies": {
