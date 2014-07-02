@@ -30,8 +30,10 @@ co(function*() {
 
   var data = '';
   while (!e.emitted('end')) {
-    // waiting 'data' or 'end' envets.
-    data += yield e.on('data', 'end');
+    var chunk = yield e.on('data', 'end');
+    if (chunk) {
+      data += chunk;
+    }
   }
   console.log(data);
 });
